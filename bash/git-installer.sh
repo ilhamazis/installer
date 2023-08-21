@@ -1,8 +1,8 @@
 echo "=============================================================================="
 echo ">> Installing Git.."
 echo "=============================================================================="
-    sudo apt-get update -y
-    sudo apt-get install git -y
+ sudo apt-get update -y
+ sudo apt-get install git -y
     git --version
 echo
 
