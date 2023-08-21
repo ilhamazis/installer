@@ -1,23 +1,25 @@
-echo "=============================================================="
+echo "=============================================================================="
 echo ">> Installing Git.."
-echo "=============================================================="
-sudo apt-get update
-sudo apt-get install git
-git --version
+echo "=============================================================================="
+    sudo apt-get update -y
+    sudo apt-get install git -y
+    git --version
 echo
 
-echo "=============================================================="
-echo ">> Configure Git"
-echo "=============================================================="
-read -p 'Username: ' name
-read -p 'Email: ' email
+echo "=============================================================================="
+echo ">> Configure Git (input your git account)"
+echo "=============================================================================="
+    read -p 'Username: ' name
+    read -p 'Email: ' email
 echo 
-git config --global user.name $name
-git config --global user.email $email
-echo "= Git config list ="
-git config --list
+    git config --global user.name $name
+    git config --global user.email $email
+echo "== Git config list =="
+echo user.name=$name
+echo user.email=$email
+echo
 
-echo "=============================================================="
+echo "=============================================================================="
 echo ">> Git already set up.."
-echo "=============================================================="
+echo "=============================================================================="
 
