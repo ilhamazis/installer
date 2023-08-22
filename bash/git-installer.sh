@@ -19,7 +19,10 @@ echo user.name=$name
 echo user.email=$email
 echo
 
+#variable
+VER="$(git --version)"
+
 echo "=============================================================================="
-echo ">> Git already set up.."
+echo ">> $VER already set up"
 echo "=============================================================================="
 
