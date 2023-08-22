@@ -29,8 +29,9 @@ echo
 
 #Variable
 MYIP="$(ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')"
+VER="$(jenkins --version)"
 
 echo "=============================================================================="
-echo ">> Jenkins already installed.."
+echo ">> Jenkins $VER already installed.."
 echo "=============================================================================="
 echo "Visit http://$MYIP:8080/ and input administrator password to setup your installation."
