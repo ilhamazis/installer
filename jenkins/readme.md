@@ -1,0 +1,1 @@
+Berikut folder automation untuk jenkinsfile
