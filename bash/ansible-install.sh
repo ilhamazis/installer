@@ -14,6 +14,11 @@ echo ">> Installing Ansible & Upgrading.."
 echo "=============================================================================="
     sudo apt install ansible
     sudo apt upgrade ansible
+echo
+
+echo "=============================================================================="
+echo ">> Show Ansible Version"
+echo "=============================================================================="
     ansible --version
 echo
 
