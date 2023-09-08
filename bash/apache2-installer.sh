@@ -13,24 +13,29 @@ echo "==========================================================================
 echo
 
 echo "=============================================================================="
-echo ">> Installing the latest pip from the Python Packaging Authority (PPA)"
+echo ">> Installing Apache2.."
 echo "=============================================================================="
-    sudo apt-add-repository ppa:ansible/ansible
-
-echo "=============================================================================="
-echo ">> Installing Ansible & Upgrading.."
-echo "=============================================================================="
-    sudo apt install ansible
-    sudo apt upgrade ansible
+    sudo apt install apache2 -y
 echo
 
 echo "=============================================================================="
-echo ">> Show Ansible Version"
+echo ">> Firewall Cnfiguration.."
 echo "=============================================================================="
-    ansible --version
+    sudo ufw allow 'Apache Full'
+    sudo ufw app list
 echo
 
 echo "=============================================================================="
-echo ">> Ansible already installed."
+echo ">> Show apache2 status"
 echo "=============================================================================="
+    systemctl status apache2 --no-pager
+echo
+
+#Variable
+MYIP="$(ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')"
+
+echo "=============================================================================="
+echo ">> Apache2 already installed.."
+echo "=============================================================================="
+echo "Visit http://$MYIP/ to check your installation."
 
