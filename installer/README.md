@@ -1,2 +1,0 @@
-# installer
-Installation Scripts

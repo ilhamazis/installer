@@ -1,23 +1,27 @@
 #!/bin/bash
 
+# Install PostgreSQL first!
+#   sudo passwd postgres
+#   su - postgres
+#   createuser sonar
+#   psql 
+#   ALTER USER sonar WITH ENCRYPTED password 'sonar';
+#   CREATE DATABASE sonarqube OWNER sonar;
+#   grant all privileges on DATABASE sonarqube to sonar;
+#   \q
+
 # Install Java JDK 11
 echo "=============================================================================="
 echo ">> Installing Java.."
 echo "=============================================================================="
-  sudo apt-get update -y
-  sudo apt install openjdk-11-jdk -y
-echo
-
-# Install PostgreSQL
-echo "=============================================================================="
-echo ">> Installing and enable PostgreSQL"
-echo "=============================================================================="
-    sudo apt-get -y install postgresql postgresql-contrib
-
-# Start and enable PostgreSQL service
-    sudo systemctl start postgresql
-    sudo systemctl enable postgresql
-    systemctl status postgresql --no-pager
+apt install -y wget apt-transport-https
+mkdir -p /etc/apt/keyrings
+wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc     
+echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+apt update
+apt install temurin-17-jdk
+update-alternatives --config java
+/usr/bin/java --version
 echo
 
 # Download and install SonarQube

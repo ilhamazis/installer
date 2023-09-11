@@ -1,2 +1,0 @@
-Repository untuk menempatkan jenkinsfile
-
