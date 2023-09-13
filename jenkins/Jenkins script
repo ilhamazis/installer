@@ -1,0 +1,110 @@
+pipeline {
+    agent { node { label 'ajuin' } } // node tujuan service dijalankan
+        environment {
+            APP_ENV = "production"
+            APP_URL = "https://training.sevima.com"
+            APP_DEBUG = "false"
+        }
+    stages {
+        stage('Version') {
+            steps {
+                script {
+                    VERSION = input message: 'Import version (ex 1.0/1.0.1)',
+                             parameters: [string(defaultValue: '',
+                                          description: '',
+                                          name: 'Version')]
+                }
+                echo "Version: ${VERSION}"
+                // writeFile file: 'image_version.txt', text: "${VERSION}"
+            }
+        }
+        stage('SCM') {
+            steps {
+                git branch: 'static-2023', credentialsId: 'gitlab-credential', url: 'http://gitlab.sevima.com:8888/project-semesta-5/k1-portal-training.git'
+            }
+        }
+        
+        stage ('Create ENV') {
+            steps {
+                sh "cp .env.example .env"
+                sh "composer install"
+                sh "php artisan key:generate"
+                sh "sed -i 's/APP_ENV=local/APP_ENV=${env.APP_ENV}/g' .env"
+                sh "sed -i 's#APP_URL=http://localhost#APP_URL=${env.APP_URL}#g' .env"
+                sh "sed -i 's/APP_DEBUG=true/APP_DEBUG=${env.APP_DEBUG}/g' .env"
+            }
+        }
+        stage('Quality Culture') {
+            parallel{
+                stage('SAST') {
+                    environment {
+                        scannerHome = tool 'sonar-scanner'
+                    }
+                    steps {
+                        withSonarQubeEnv('jenkins-sonarqube') {
+                            sh '${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=K1-Portal-Training'
+                        }
+                        waitForQualityGate abortPipeline: true
+                    } 
+                }
+                    
+        //         stage('DAST'){
+        //             stages{
+        //                 stage('Build & deploy app DAST'){
+        //                     steps{
+        //                         echo "ini stage Build & deploy app DAST"
+        //                     }
+        //                 }
+        //                 stage('Security scanning DAST'){
+        //                     steps{
+        //                         echo 'Security scanning DAST'
+        //                     }
+        //                 }
+        //             }
+                        
+                    
+        //         }
+            }
+            
+        }
+
+        stage('Build Image') {
+            steps {
+                script {
+                    def imageName = "s3v1m4/training:v${VERSION}-dev"
+                    docker.build(imageName, "-f Dockerfile .")
+                }
+            }
+        }
+    
+        stage('Docker Stop') {
+            steps {
+                    // script {
+                    //     def STATUS = sh(script: "docker ps | grep -q 'sevima-university' && echo 'Available' || echo 'Not Available'", returnStdout: true).trim()
+                    //     if ($STATUS == 'Available'){
+                    //       sh "docker stop sevima-university" 
+                    //     } else {
+                    //         echo "Container $STATUS"
+                    //     }
+                    // }
+                    sh "docker rm --force sevima-training" 
+            }
+        }
+        
+        stage('Running Container') {
+            steps {
+                sh "docker run -d -p 8000:80 --name=sevima-training s3v1m4/training:v${VERSION}-dev"
+            }
+        }
+        stage('Clean docker image') {
+            steps {
+                sh "docker system prune -af --volumes"
+            }
+        }
+        stage('Pipeline Success!') {
+            steps {
+                echo 'Pipeline Success!'
+            }
+        }
+    }
+}
